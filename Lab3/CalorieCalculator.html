@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Calorie Calculator</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+    <h1>Calorie Calculator</h1>
+    <p>Enter the ingredients for your recipe below:</p>
+    <form>
+        <label for="ingredient-name">Ingredient Name:</label>
+        <input type="text" id="ingredient-name" placeholder="Name">
+        <br><br>
+
+        <label for="ingredient-amount">Amount (in grams/liters):</label>
+        <input type="number" id="ingredient-amount" placeholder="0-∞">
+        <br><br>
+
+        <label for="calories-per-100">Calories per 100 grams/milliliters:</label>
+        <input type="number" id="calories-per-100" placeholder="0-20">
+        <br><br>
+        <button type="button" onclick="addIngredient()">Add Ingredient</button>
+    </form>
+    <br><br>
+    <div id="ingredients-list">
+
+    </div>
+    <br><br>
+    <button type="button" onclick="calculateCalories()">Calculate Calories</button>
+    <br><br>
+    <div id="total-calories"></div>
+    <div id="healthy-message"></div>
+    <script>
+        let ingredients = [];
+
+        function addIngredient() {
+            let name = document.getElementById("ingredient-name").value;
+            let amount = document.getElementById("ingredient-amount").value;
+            let calories = document.getElementById("calories-per-100").value;
+
+            // Validate the input
+            if (isNaN(amount) || amount < 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            if (isNaN(calories) || calories < 0 || calories > 20) {
+                alert("Please enter a valid calorie value.");
+                return;
+            }
+
+            let ingredient = { name: name, amount: amount, calories: calories };
+            ingredients.push(ingredient);
+
+            // Clear the input fields
+            document.getElementById("ingredient-name").value = "";
+            document.getElementById("ingredient-amount").value = "";
+            document.getElementById("calories-per-100").value = "";
+
+            // Update the ingredients list
+            let list = "";
+            for (let i = 0; i < ingredients.length; i++) {
+                list += ingredients[i].name + " (" + ingredients[i].amount + " g/ml, " + ingredients[i].calories + " cal/100g/ml)<br>";
+            }
+            document.getElementById("ingredients-list").innerHTML = list;
+        }
+
+        function calculateCalories() {
+            let totalCalories = 0;
+            for (let i = 0; i < ingredients.length; i++) {
+                let calPerGram = ingredients[i].calories / 100;
+                let calPerAmount = calPerGram * ingredients[i].amount;
+                totalCalories += calPerAmount;
+            }
+            document.getElementById("total-calories").innerHTML = "Total Calories: " + totalCalories.toFixed(2);
+
+            // Show the healthy message
+            let message = "";
+            let color = "";
+            if (totalCalories <= 100) {
+                message = "Very healthy";
+                color = "green";
+            } else if (totalCalories <= 200) {
+                message = "Healthy";
+                color = "yellow";
+            } else if (totalCalories <= 300) {
+                message = "It is good to stay away";
+                color = "orange";
+            } else {
+                message = "Stay away";
+                color = "red";
+            }
+            document.getElementById("healthy-message").innerHTML = message;
+            document.getElementById("healthy-message").style.color = color;
+        }
+    </script>
+</body>
+</html>
